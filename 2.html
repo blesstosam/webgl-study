@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webgl2</title>
+    <style>
+        #canvas-frame{background-color: #eeeeee;width:100%;height:600px;}
+    </style>
+    <script src="js/three.js"></script>
+    <script src="js/Stats.js"></script>
+</head>
+<body>
+
+<div id="canvas-frame"></div>
+
+<script>
+    window.onload=function(){
+        initThree();
+        initCamera();
+        initScene();
+        initLight();
+        initLine();
+
+        renderer.clear();
+        renderer.render(scene,camera);
+    }
+
+
+    /* 初始化渲染器 */
+    var width,height,renderer;
+    function initThree(){
+        width=document.getElementById('canvas-frame').clientWidth;
+        height=document.getElementById('canvas-frame').clientHeight;
+        renderer=new THREE.WebGLRenderer({antialias:true});      //该参数表示渲染效果更好
+        renderer.setSize(width,height);
+        document.getElementById('canvas-frame').appendChild(renderer.domElement);
+        renderer.setClearColor(0xffffff,2.0);
+    }
+
+    /* 初始化相机 */
+    var camera;
+    function initCamera(){
+        camera=new THREE.PerspectiveCamera(45,width/height,1,1000);
+        camera.position.x=0;
+        camera.position.y=1000;
+        camera.position.z=0;
+        camera.up.x=0;
+        camera.up.y=0;
+        camera.up.z=1;
+        camera.lookAt({
+            x:0,
+            y:0,
+            z:0
+        });
+    }
+
+    /* 初始化场景 */
+    var scene;
+    function initScene(){
+        scene=new THREE.Scene();
+    }
+
+    /* 初始化灯光 */
+    var light;
+    function initLight(){
+        light=new THREE.DirectionalLight(0xff0000,1.0,0);
+        light.position.set(100,100,200);
+        scene.add(light);                    //注意灯光要加进场景
+    }
+
+    /* 初始化线条 */
+    var line;
+    function initLine(){
+        var geometry=new THREE.Geometry();
+        var material=new THREE.LineBasicMaterial({vertexColors:true});
+        var color1=new THREE.Color(0x444444),color2=new THREE.Color(0xff0000);
+
+        var p1=new THREE.Vector3(-100,0,100);
+        var p2=new THREE.Vector3(100,0,-100);
+        geometry.vertices.push(p1);
+        geometry.vertices.push(p2);
+        geometry.colors.push(color1,color2);
+
+        line=new THREE.Line(geometry,material,THREE.LineSegments);
+        scene.add(line);
+    }
+
+</script>
+</body>
+</html>
+
+
+
+

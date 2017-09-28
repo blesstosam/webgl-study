@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Three框架</title>
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/DeviceOrientationControls.js"></script>
+    <script src="js/StereoEffect.js"></script>
+    <style type="text/css">
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #EEEEEE;
+        }
+
+    </style>
+    <script>
+        var renderer,camera,scene,light,mesh,controls,width,height,effect,floor;
+        function initThree() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            renderer = new THREE.WebGLRenderer({
+                antialias : true
+            });
+            renderer.setSize(width, height);
+            document.body.appendChild(renderer.domElement);
+            renderer.setClearColor(0xFFFFFF, 1.0);
+            effect = new THREE.StereoEffect(renderer);
+        }
+
+        function initScene() {
+            scene = new THREE.Scene();
+        }
+
+        function initCamera() {
+            camera = new THREE.PerspectiveCamera(90, width / height, 0.01, 10000);
+            camera.position.x =3;
+            camera.position.y = 5;
+            camera.position.z = 5;
+            scene.add(camera);
+        }
+
+        function initLight() {
+            light=new THREE.AmbientLight(0xffffff);
+            light.position.set(100,100,100);
+            scene.add(light);
+        }
+
+        function initObject() {
+            var geometry = new THREE.CubeGeometry( 2, 2, 2,4,4);
+            var material = new THREE.MeshLambertMaterial( { color:0x00ffff} );
+            mesh = new THREE.Mesh( geometry,material);
+            mesh.position.y=2;
+            scene.add(mesh);
+        }
+
+        function initFloor () {
+            var floorTexture =new THREE.ImageUtils.loadTexture('image/2.png');
+            floorTexture.wrapS =floorTexture.wrapT= THREE.RepeatWrapping;
+            floorTexture.repeat.set(4,4);
+            var floorMaterial = new THREE.MeshLambertMaterial({
+                map: floorTexture
+            });
+            var floorGeometry = new THREE.PlaneGeometry(20, 20);
+            floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            scene.add(floor);
+        }
+
+        function animation() {
+            mesh.rotation.y+=0.1;
+
+            width=window.innerWidth;
+            height=window.innerHeight;
+            renderer.setSize(width,height);
+            effect.setSize(width, height);
+            effect.render(scene, camera);
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+
+            requestAnimationFrame(animation);
+        }
+
+        //点击屏幕全屏
+//        function fullscreen() {
+//            if (document.body.requestFullscreen) {
+//                document.body.requestFullscreen();
+//            } else if (document.body.msRequestFullscreen) {
+//                document.body.msRequestFullscreen();
+//            } else if (document.body.mozRequestFullScreen) {
+//                document.body.mozRequestFullScreen();
+//            } else if (document.body.webkitRequestFullscreen) {
+//                document.body.webkitRequestFullscreen();
+//            }
+//        }
+
+        function setDeviceOrientationControls() {
+            controls = new THREE.DeviceOrientationControls(camera, true);
+            controls.connect();
+            controls.update();
+            window.addEventListener('click',fullscreen,true);
+            window.removeEventListener('deviceorientation', setDeviceOrientationControls, true);
+        }
+
+        function threeStart() {
+            initThree();
+            initScene();
+            initCamera();
+            initLight();
+            initObject();
+            initFloor();
+
+            //添加鼠标控制
+            controls= new THREE.OrbitControls(camera, renderer.domElement);
+            controls.target.set(
+                camera.position.x+0.01,
+                camera.position.y,
+                camera.position.z
+            );
+
+
+            //添加陀螺仪控制
+            window.addEventListener('deviceorientation',setDeviceOrientationControls,true);
+
+            animation();
+        }
+
+    </script>
+</head>
+
+<body onload="threeStart();">
+</body>
+</html>

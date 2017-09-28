@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webgl1</title>
+    <style>
+        /*body{background-color:white;}*/
+    </style>
+    <script src="js/three.js"></script>
+    <script src="js/Stats.js"></script>
+</head>
+<body>
+
+<script>
+    /* 加一个显示帧数的stats */
+    var stats=new Stats();
+    stats.domElement.style.position='absolute';
+    stats.domElement.style.left='10px';
+    stats.domElement.style.top='10px';
+    document.getElementsByTagName('body')[0].appendChild(stats.domElement);
+
+    /*定义三大组建*/
+    var scene=new THREE.Scene();
+    var camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,1,100);
+    var renderer=new THREE.WebGLRenderer();
+    renderer.setClearColor('#000000');           //three.js渲染器的默认背景颜色为黑色
+    renderer.setSize(window.innerWidth,window.innerHeight);
+
+    /*将渲染插入body*/
+    document.body.appendChild(renderer.domElement);
+
+    /*定义好几何体并加入场景中*/
+    var geometry=new THREE.CubeGeometry(2,2,2,3,3,3);
+    var material=new THREE.MeshBasicMaterial({color:0xff0000,wireframe:false});
+    var cube=new THREE.Mesh(geometry,material);
+    cube.position.x=-12;
+    scene.add(cube);
+
+    var geo1=new THREE.SphereGeometry(2,20,20);
+    var sphere=new THREE.Mesh(geo1,material);
+    sphere.position.x=-6;
+    scene.add(sphere);
+
+    var geo2=new THREE.TetrahedronGeometry(2);
+    var tetra=new THREE.Mesh(geo2,material);
+    scene.add(tetra);
+
+    var geo3=new THREE.TorusGeometry(2,0.5,8,12);
+    var torus=new THREE.Mesh(geo3,material);
+    torus.position.x=6;
+    scene.add(torus);
+
+    var geo4=new THREE.SphereGeometry(3,20,12);
+    var mat4=new THREE.MeshPhongMaterial({
+        color:0xff0000,
+        specular:0xffff00,
+        shininess:100
+    });
+    var sph=new THREE.Mesh(geo4,mat4);
+    scene.add(sph);
+
+    /* 加入灯光 */
+    var light=new THREE.AmbientLight(0xffffff);
+    scene.add(light);
+
+
+    /*放置相机位置，很重要*/
+    camera.position.z=8;
+
+    /*定义渲染方式*/
+    function render(){
+//        stats.begin();
+        requestAnimationFrame(render);
+        cube.rotation.x +=0.01;
+        cube.rotation.y +=0.01;
+        cube.rotation.z +=0.01;
+        sphere.rotation.y+=0.01;
+        tetra.rotation.y+=0.01;
+        torus.rotation.y+=0.01;
+        renderer.render(scene,camera);
+        stats.update();
+    }
+
+    render();
+  
+
+</script>
+</body>
+</html>
